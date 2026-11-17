@@ -1,0 +1,29 @@
+# Monitorización de servicios con Uptime Kuma.
+#
+# Levanta un panel web que comprueba cada X segundos si tus webs, servidores
+# o puertos responden (HTTP, ping, TCP, DNS...) y avisa por Telegram, email,
+# etc. cuando algo cae.
+#
+# Uso:
+#   docker compose up -d       # arrancar
+#   docker compose logs -f     # ver los logs
+#   docker compose down        # parar (los datos se conservan en el volumen)
+#
+# Panel: http://localhost:3001
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped          # vuelve a arrancar solo tras un reinicio del servidor
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime-kuma-data:/app/data   # base de datos y configuración persistentes
+    environment:
+      - TZ=Europe/Madrid
+    # La imagen ya trae su propio HEALTHCHECK: "docker ps" mostrará
+    # (healthy) o (unhealthy) según responda el panel.
+
+volumes:
+  uptime-kuma-data:
